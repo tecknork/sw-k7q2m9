@@ -1,8 +1,9 @@
 name: watch
 
+# Schedule is off while the site refuses this runner. To turn it back on, add under 'on:':
+#   schedule:
+#     - cron: '3-58/5 * * * *'
 on:
-  schedule:
-    - cron: '3-58/5 * * * *'
   workflow_dispatch:
 
 permissions:

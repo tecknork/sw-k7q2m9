@@ -116,7 +116,8 @@ async function collect(cfg, dates, redact) {
     for (let attempt = 1; attempt <= 3 && !loaded; attempt++) {
       try {
         const resp = await page.goto(cfg.clubUrl, { waitUntil: 'domcontentloaded', timeout: 45000 });
-        last = resp ? `HTTP ${resp.status()}` : 'no response';
+        const h = resp ? resp.headers() : {};
+        last = resp ? `HTTP ${resp.status()}, server: ${h['server'] ?? '?'}, challenge: ${h['cf-mitigated'] ?? 'none'}` : 'no response';
         loaded = !!resp && resp.status() < 400;
       } catch (e) {
         last = redact(e.message).split('\n')[0];
