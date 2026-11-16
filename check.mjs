@@ -162,8 +162,8 @@ async function sendSlack(webhook, text) {
 
 async function main() {
   if (!process.env.WATCH_CONFIG) {
-    console.log('::error::WATCH_CONFIG secret is missing.');
-    process.exit(1);
+    console.log('::warning::WATCH_CONFIG secret is not set yet, so nothing was checked.');
+    return;
   }
   const cfg = JSON.parse(process.env.WATCH_CONFIG);
   const redact = makeRedactor(cfg);
