@@ -1,0 +1,39 @@
+name: watch
+
+on:
+  schedule:
+    - cron: '3-58/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: watch
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        run: npm install --no-audit --no-fund --silent
+
+      - name: Check
+        run: node check.mjs
+        env:
+          WATCH_CONFIG: ${{ secrets.WATCH_CONFIG }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Save state
+        run: |
+          if ! git diff --quiet -- reported.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add reported.json
+            git commit -q -m "state"
+            git push -q
+          fi
